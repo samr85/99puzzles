@@ -1,0 +1,14 @@
+.resultsColumn {
+    background-color: lightgreen;
+}
+
+.resultsTable {
+    margin-top: 10px;
+}
+.resultsTable td {
+    min-width: 40px;
+    text-align:center;
+}
+.correctRow {
+    color: red;
+}

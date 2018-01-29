@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>99 Puzzles - register</title>
+</head>
+<body>
+    {{message}}
+    <p>Enter a username and password to register with.  Note: password is just stored sha512'd, is sent over a non-encrypted connection, and there is no attmepts at login protection</p>
+    <form method="post">
+        <input type="text" name="username" />
+        <input type="password" name="password" />
+        <input type="password" name="confirmPassword" />
+    </form>
+</body>
+</html>

@@ -1,0 +1,6 @@
+__pycache__
+.*
+*.swp
+*~
+mathsUtils.py
+questionList.py
