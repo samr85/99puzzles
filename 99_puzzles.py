@@ -110,13 +110,6 @@ class puzzle(tornado.web.RequestHandler):
         self.getUserAndQuestion()
         self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question = self.question, user=self.user, justAnswered = False)
         
-
-def startServer():
-    server_thread = threading.Thread(target=tornado.ioloop.IOLoop.instance().start)
-    # Exit the server thread when the main thread terminates
-    server_thread.daemon = True
-    server_thread.start()
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Runs 99puzzles webserver")
@@ -135,13 +128,17 @@ if __name__ == "__main__":
 
     if args.debug:
         application.listen(9091)
+        server_thread = threading.Thread(target=tornado.ioloop.IOLoop.instance().start)
+        # Exit the server thread when the main thread terminates
+        server_thread.daemon = True
+        server_thread.start()
+
+        import readline
+        import rlcompleter
+        import code
+        readline.parse_and_bind("tab: complete")
+        code.interact(local=locals())
+        tornado.ioloop.IOLoop.instance().stop()
     else:
         application.listen(80)
-
-    startServer()
-    import readline
-    import rlcompleter
-    import code
-    readline.parse_and_bind("tab: complete")
-    code.interact(local=locals())
-    tornado.ioloop.IOLoop.instance().stop()
+        tornado.ioloop.IOLoop.instance().start()
