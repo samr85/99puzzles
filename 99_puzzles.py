@@ -57,7 +57,6 @@ class logout(tornado.web.RequestHandler):
         self.clear_all_cookies()
 
 class puzzle(tornado.web.RequestHandler):
-
     def checkAnswer(self, user, question):
         A = []
         for i in range(question.numInputs):
@@ -74,41 +73,51 @@ class puzzle(tornado.web.RequestHandler):
             return True
         return False
 
-    def getUserAndQuestion(self):
+    def getUser(self, create = False):
         userName = self.get_secure_cookie("user", max_age_days=36524)  # Must specify a max_age... 100 years
         if not userName:
-            print("userName not set, creating")
-            userName = "%06x"%(random.randint(1, 0xffffff))
-            self.set_secure_cookie("user", userName, expires_days=None)
-        self.user = database.getUser(userName, create=True)
+            if create:
+                userName = "%06x" % (random.randint(1, 0xffffff))
+                self.set_secure_cookie("user", userName, expires_days=100)
+            else:
+                return database.getNullUser()
 
-        # What question are they interested in?
+        return database.getUser(userName, True)
+
+    def getQuestion(self, user):
+        # Have they specified a question?
         qNoStr = self.get_query_argument("qNo", default = None)
-
-        if qNoStr == None:
-            qNo = self.user.highestSolved + 1
-            print("qNo not set, using highest available qNo (%d)"%(qNo))
-        else:
+        if qNoStr:
             try:
                 qNo = int(qNoStr)
             except ValueError:
                 raise tornado.web.HTTPError(400, "Invalid question number: %s"%(qNoStr))
-            if qNo > self.user.highestSolved + 1:
+            if qNo > user.highestSolved + 1:
                 raise tornado.web.HTTPError(400, "Cannot request a question you've not earnt!")
-        if questions.lastQuestion() < qNo:
-            qNo = questions.lastQuestion()
-        self.question = questions.getQuestion(qNo)
+        else:
+            # Is this a registered user?
+            if user:
+                qNo = user.highestSolved + 1
+                if qNo > questions.lastQuestion():
+                    qNo = questions.lastQuestion()
+                print("qNo not set, using highest available qNo (%d)"%(qNo))
+            else:
+                qNo = 1
+
+        return questions.getQuestion(qNo)
 
     def post(self):
-        self.getUserAndQuestion()
+        user = self.getUser(create = True)
+        question = self.getQuestion(user)
 
         # Submit an answer
-        justAnswered = self.checkAnswer(self.user, self.question)
-        self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question = self.question, user=self.user, justAnswered = justAnswered)
+        justAnswered = self.checkAnswer(user, question)
+        self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question = question, user=user, justAnswered = justAnswered)
 
     def get(self):
-        self.getUserAndQuestion()
-        self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question = self.question, user=self.user, justAnswered = False)
+        user = self.getUser()
+        question = self.getQuestion(user)
+        self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question = question, user=user, justAnswered = False)
         
 if __name__ == "__main__":
 

@@ -1,1 +1,1 @@
-nohup python3 -u 99_puzzles.py
+nohup python3 -u 99_puzzles.py &

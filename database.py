@@ -41,6 +41,9 @@ class userState:
 
 users = {}
 
+def getNullUser():
+    return userState(None)
+
 def getUser(name, create = False):
     if name in users:
         return users[name]

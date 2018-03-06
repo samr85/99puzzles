@@ -17,23 +17,24 @@
     {% for i in user.availableQuestions() %}
         <option value="{{"%d"%(i)}}"{% if i == question.qNo %} selected="selected"{% end %}>Question {{"%d"%(i)}}</option>
     {% end %}
+
     </select>
     </form>
 
     <!-- Section for if the user has answered correctly -->
     {% if user.highestSolved >= question.qNo %}
-    {% if justAnswered %}
-    <p>CONGRATULATIONS, you found 99!</p>
-    {% else %}
-    <p>Question previously answered correctly!</p>
-    {% end %}
-    {{question.completionHTML}}
-    {% if i != question.qNo %}
-    <!-- If this wasn't the last question allowed to access, bring up a button to go straight to that one -->
-    <form method="get">
-        <button value="{{"%d"%(i)}}" name="qNo" onclick="this.form.submit()">Go to unanswered question</button>
-    </form>
-    {% end %}
+        {% if justAnswered %}
+            <p>CONGRATULATIONS, you found 99!</p>
+        {% else %}
+            <p>Question previously answered correctly!</p>
+        {% end %}
+        {{question.completionHTML}}
+        {% if i != question.qNo %}
+            <!-- If this wasn't the last question allowed to access, bring up a button to go straight to that one -->
+            <form method="get">
+                <button value="{{"%d"%(i)}}" name="qNo" onclick="this.form.submit()">Go to unanswered question</button>
+            </form>
+        {% end %}
     {% end %}
 
     <!-- input a new answer -->
