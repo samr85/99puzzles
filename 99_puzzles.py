@@ -56,6 +56,10 @@ class logout(tornado.web.RequestHandler):
     def get(self):
         self.clear_all_cookies()
 
+class dumpdb(tornado.web.RequestHandler):
+    def get(self):
+        self.write("<pre>" + database.dumpdb() + "<pre>")
+
 class puzzle(tornado.web.RequestHandler):
     def checkAnswer(self, user, question):
         A = []
@@ -133,6 +137,7 @@ if __name__ == "__main__":
         }
     application = tornado.web.Application([
         (r"/", puzzle),
+        (r"/dumpdb", dumpdb),
         ], **settings)
 
     if args.debug:
@@ -146,7 +151,7 @@ if __name__ == "__main__":
         import rlcompleter
         import code
         readline.parse_and_bind("tab: complete")
-        d=database.dumpdb
+        d=database.printdb
         code.interact(local=locals())
         tornado.ioloop.IOLoop.instance().stop()
     else:

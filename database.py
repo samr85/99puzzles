@@ -21,8 +21,12 @@ def dumpdb():
     ''' Purely for debugging - prints out the users and answers tables '''
     import prettytable
     c = database.cursor()
-    print(prettytable.from_db_cursor(c.execute("SELECT * FROM users")))
-    print(prettytable.from_db_cursor(c.execute("SELECT * FROM answers")))
+    ret = str(prettytable.from_db_cursor(c.execute("SELECT * FROM users"))) + "\n\n"
+    ret += str(prettytable.from_db_cursor(c.execute("SELECT * FROM answers")))
+    return ret
+
+def printdb():
+    print(dumpdb())
 
 
 class answer:
