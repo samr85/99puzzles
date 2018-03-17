@@ -56,8 +56,8 @@
             <th>result</th>
             <th colspan="{{question.numInputs}}">inputs</th>
         </tr>
-        {% for answer in user.answers[question.qNo][::-1] %}
-        <tr{% if answer.result == question.correctAnswer %} class="correctRow"{%end%}>
+        {% for answer in user.getAnswers(question)[::-1] %}
+        <tr{% if answer.correct %} class="correctRow"{%end%}>
             <td>{{answer.result}}</td>
             <td>{{"</td><td>".join("%d"%(x) for x in answer.inputs)}}</td>
         </tr>
