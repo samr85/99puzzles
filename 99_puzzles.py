@@ -77,7 +77,7 @@ class puzzle(tornado.web.RequestHandler):
         userName = self.get_secure_cookie("user", max_age_days=36524)  # Must specify a max_age... 100 years
         if not userName:
             if create:
-                userName = "%06x" % (random.randint(1, 0xffffff))
+                userName = ("%06x" % (random.randint(1, 0xffffff))).encode()
                 self.set_secure_cookie("user", userName, expires_days=100)
             else:
                 return database.getNullUser()
