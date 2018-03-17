@@ -82,7 +82,7 @@ class puzzle(tornado.web.RequestHandler):
             else:
                 return database.getNullUser()
 
-        return database.getUser(userName, True)
+        return database.getUser(userName)
 
     def getQuestion(self, user):
         # Have they specified a question?
@@ -146,6 +146,7 @@ if __name__ == "__main__":
         import rlcompleter
         import code
         readline.parse_and_bind("tab: complete")
+        d=database.dumpdb
         code.interact(local=locals())
         tornado.ioloop.IOLoop.instance().stop()
     else:
