@@ -9,6 +9,7 @@ import argparse
 import questions
 import questionList
 import database
+import users
 
 class register(tornado.web.RequestHandler):
     def renderPage(message = ""):
@@ -28,7 +29,7 @@ class register(tornado.web.RequestHandler):
         if not userName:
             userName = "%06x"%(random.randint(1, 0xffffff))
             self.set_secure_cookie("user", userName, expires_days=None)
-        user = database.getUser(userName)
+        user = users.getUser(userName)
         ret = user.nameUser(newName, password)
         if ret:
             self.set_secure_cookie("user", newName, expires_days=None)
@@ -60,6 +61,11 @@ class dumpdb(tornado.web.RequestHandler):
     def get(self):
         self.write("<pre>" + database.dumpdb() + "<pre>")
 
+class reload(tornado.web.RequestHandler):
+    def get(self):
+        questions.reloadQuestions()
+        self.write("Questions reloaded")
+
 class puzzle(tornado.web.RequestHandler):
     def checkAnswer(self, user, question):
         A = []
@@ -84,9 +90,9 @@ class puzzle(tornado.web.RequestHandler):
                 userName = ("%06x" % (random.randint(1, 0xffffff))).encode()
                 self.set_secure_cookie("user", userName, expires_days=100)
             else:
-                return database.getNullUser()
+                return users.getNullUser()
 
-        return database.getUser(userName)
+        return users.getUser(userName)
 
     def getQuestion(self, user):
         # Have they specified a question?
@@ -138,6 +144,7 @@ if __name__ == "__main__":
     application = tornado.web.Application([
         (r"/", puzzle),
         (r"/dumpdb", dumpdb),
+        (r"/reload", reload)
         ], **settings)
 
     if args.debug:

@@ -23,6 +23,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="99_puzzles.py" />
+    <Compile Include="answer.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="database.py">
       <SubType>Code</SubType>
     </Compile>
@@ -33,6 +36,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="questions.py" />
+    <Compile Include="users.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.4" />
