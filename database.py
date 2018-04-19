@@ -71,6 +71,7 @@ def getUser(userName):
 
 def createUser(userName):
     createUserSQL = "INSERT INTO users(username) values (?)"
+    c = database.cursor()
     with databaseWriteLock:
         c.execute(createUserSQL, (userName, ))
         database.commit()
@@ -91,6 +92,7 @@ def logAnswer(userId, questionNumber, inputString, result):
 
 def setUserProgress(userId, highestSolved):
     updateQnoSQL = "UPDATE users SET highestSolved=? WHERE id=?"
+    c = database.cursor()
     with databaseWriteLock:
         c.execute(updateQnoSQL, (highestSolved, userId))
         database.commit()
