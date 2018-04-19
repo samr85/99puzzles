@@ -28,7 +28,7 @@
         {% else %}
             <p>Question previously answered correctly!</p>
         {% end %}
-        {{question.completionHTML}}
+        {{question.questionConclusion(user)}}
         {% if i != question.qNo %}
             <!-- If this wasn't the last question allowed to access, bring up a button to go straight to that one -->
             <form method="get">
@@ -38,7 +38,7 @@
     {% end %}
 
     <!-- input a new answer -->
-    {{question.introductionHTML}}
+    {{question.questionIntro(user)}}
     <form method="post">
         <b>f<sub>{{question.qNo}}</sub>( 
         <input type="number" name="A{{'" /> , <input type="number" name="A'.join("%d"%(x) for x in range(question.numInputs))}}" />

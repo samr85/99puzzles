@@ -1,4 +1,4 @@
-
+import database
 questionList = {}
 
 def registerQuestion(questionClass):
@@ -16,8 +16,13 @@ def getQuestion(qNo):
 def lastQuestion():
     return question.qNo
 
-# Only export a small amount of this file!
-__all__ = [lastQuestion, getQuestion, questionList]
+def reloadQuestions():
+    questionList = {}
+    question.qNo = -1
+    import imp
+    import questionList
+    imp.reload(questionList)
+
 
 class question:
     qNo = -1
@@ -28,6 +33,18 @@ class question:
         self.correctAnswer = 99
         self.numInputs = 1
         self.qNo = 0
+
+    def getUserData(self, user):
+        return database.getExtraData("%s-%d"%(user.name, self.qNo))
+
+    def setUserData(self, user, data):
+        return database.setExtraData("%s-%d"%(user.name, self.qNo), data)
+
+    def questionIntro(self, user):
+        return self.introductionHTML
+
+    def questionConclusion(self, user):
+        return self.completionHTML
 
     def calcCheck(self, user, answerList):
         if len(answerList) != self.numInputs:
