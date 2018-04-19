@@ -9,7 +9,7 @@ class userState:
             #self.named = databaseEntry['named']
             #self.password = databaseEntry['passwordHash']
             self.highestSolved = databaseEntry['highestSolved']
-            self.id=databaseEntry['id']
+            self.id = databaseEntry['id']
         else:
             self.name = None
             self.highestSolved = -1
@@ -46,7 +46,7 @@ class userState:
 def getNullUser():
     return userState(None)
 
-def getUser(name, create = True):
+def getUser(name, create=True):
     dbEntry = database.getUser(name)
     if not dbEntry:
         if not create:

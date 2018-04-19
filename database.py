@@ -1,10 +1,8 @@
-from collections import defaultdict
-import hashlib
 import sqlite3
 import pickle
 from threading import RLock
 
-database = sqlite3.connect("userdatabase.db", check_same_thread = False)
+database = sqlite3.connect("userdatabase.db", check_same_thread=False)
 databaseWriteLock = RLock()
 
 def initDb():
@@ -19,7 +17,7 @@ def initDb():
     c.execute(extraDataTableSyntax)
     database.commit()
     c.close()
-    
+
 initDb()
 
 def dumpdb():
@@ -42,17 +40,17 @@ def printdb():
     print(dumpdb())
 
 def getExtraData(index):
-   getDataSql = "SELECT data FROM extraData WHERE indexString=?"
-   c = database.cursor()
-   c.execute(getDataSql, (index,))
-   dataRow = c.fetchone()
-   if dataRow:
-       try:
-           return pickle.loads(dataRow["data"])
-       except Exception as ex:
-           print("Exception loading stored data: " + str(ex))
-           return None
-   return None
+    getDataSql = "SELECT data FROM extraData WHERE indexString=?"
+    c = database.cursor()
+    c.execute(getDataSql, (index,))
+    dataRow = c.fetchone()
+    if dataRow:
+        try:
+            return pickle.loads(dataRow["data"])
+        except Exception as ex:
+            print("Exception loading stored data: " + str(ex))
+            return None
+    return None
 
 def setExtraData(index, data):
     """ Save some arbitrary data into the database.  Will except if data is not serialisable """
@@ -75,7 +73,7 @@ def createUser(userName):
     with databaseWriteLock:
         c.execute(createUserSQL, (userName, ))
         database.commit()
-    return self.getUser(userName)
+    return getUser(userName)
 
 def getAnswers(userId, questionNumber):
     getAnswersSQL = "SELECT inputs, result FROM answers WHERE userid=? AND questionNumber=? ORDER BY time"
@@ -96,11 +94,3 @@ def setUserProgress(userId, highestSolved):
     with databaseWriteLock:
         c.execute(updateQnoSQL, (highestSolved, userId))
         database.commit()
-
-#def requestNamedUser(name, password):
-#    user = getUser(name)
-#    if not user:
-#        return None
-#    if user.password == hashlib.sha512(password):
-#        return user
-#    return None

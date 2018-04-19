@@ -1,18 +1,17 @@
 import threading
-import tornado.web
-import tornado.websocket
-import json
 import os
 import random
 import argparse
+import tornado.web
+import tornado.websocket
 
 import questions
 import questionList
 import database
 import users
 
-class register(tornado.web.RequestHandler):
-    def renderPage(message = ""):
+class Register(tornado.web.RequestHandler):
+    def renderPage(self, message=""):
         self.render(os.path.join("www", "register.html"), message=message)
 
     def get(self):
@@ -34,13 +33,12 @@ class register(tornado.web.RequestHandler):
         if ret:
             self.set_secure_cookie("user", newName, expires_days=None)
             return self.redirect("/")
-        else:
-            return self.renderPage("Username %s already exists"%(userName))
+        return self.renderPage("Username %s already exists"%(userName))
 
-class login(tornado.web.RequestHandler):
-    def renderPage(message = ""):
+class Login(tornado.web.RequestHandler):
+    def renderPage(self, message=""):
         self.render(os.path.join("www", "login.html"), message=message)
-    
+
     def get(self):
         self.renderPage()
 
@@ -53,20 +51,20 @@ class login(tornado.web.RequestHandler):
             return self.redirect("/")
         return self.renderPage("Username or password incorrect")
 
-class logout(tornado.web.RequestHandler):
+class Logout(tornado.web.RequestHandler):
     def get(self):
         self.clear_all_cookies()
 
-class dumpdb(tornado.web.RequestHandler):
+class Dumpdb(tornado.web.RequestHandler):
     def get(self):
         self.write("<pre>" + database.dumpdb() + "<pre>")
 
-class reload(tornado.web.RequestHandler):
+class Reload(tornado.web.RequestHandler):
     def get(self):
         questions.reloadQuestions()
         self.write("Questions reloaded")
 
-class puzzle(tornado.web.RequestHandler):
+class Puzzle(tornado.web.RequestHandler):
     def checkAnswer(self, user, question):
         A = []
         for i in range(question.numInputs):
@@ -74,7 +72,7 @@ class puzzle(tornado.web.RequestHandler):
                 A.append(int(self.get_body_argument("A%d" % (i))))
             except ValueError:
                 A.append(0)
-            if A[i] == None:
+            if A[i] is None:
                 raise tornado.web.HTTPError(400, "No answer submitted in position %d" % (i))
         ret = question.calcCheck(user, A)
         user.logAnswer(question, A, ret)
@@ -83,7 +81,7 @@ class puzzle(tornado.web.RequestHandler):
             return True
         return False
 
-    def getUser(self, create = False):
+    def getUser(self, create=False):
         userName = self.get_secure_cookie("user", max_age_days=36524)  # Must specify a max_age... 100 years
         if not userName:
             if create:
@@ -96,7 +94,7 @@ class puzzle(tornado.web.RequestHandler):
 
     def getQuestion(self, user):
         # Have they specified a question?
-        qNoStr = self.get_query_argument("qNo", default = None)
+        qNoStr = self.get_query_argument("qNo", default=None)
         if qNoStr:
             try:
                 qNo = int(qNoStr)
@@ -117,18 +115,18 @@ class puzzle(tornado.web.RequestHandler):
         return questions.getQuestion(qNo)
 
     def post(self):
-        user = self.getUser(create = True)
+        user = self.getUser(create=True)
         question = self.getQuestion(user)
 
         # Submit an answer
         justAnswered = self.checkAnswer(user, question)
-        self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question = question, user=user, justAnswered = justAnswered)
+        self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question=question, user=user, justAnswered=justAnswered)
 
     def get(self):
         user = self.getUser()
         question = self.getQuestion(user)
-        self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question = question, user=user, justAnswered = False)
-        
+        self.render(os.path.join("www", "Puzzle.html"), range=range, title="99 puzzles", question=question, user=user, justAnswered=False)
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Runs 99puzzles webserver")
@@ -142,9 +140,9 @@ if __name__ == "__main__":
         "autoreload": False
         }
     application = tornado.web.Application([
-        (r"/", puzzle),
-        (r"/dumpdb", dumpdb),
-        (r"/reload", reload)
+        (r"/", Puzzle),
+        (r"/dumpdb", Dumpdb),
+        (r"/reload", Reload)
         ], **settings)
 
     if args.debug:
@@ -158,7 +156,7 @@ if __name__ == "__main__":
         import rlcompleter
         import code
         readline.parse_and_bind("tab: complete")
-        d=database.printdb
+        d = database.printdb
         code.interact(local=locals())
         tornado.ioloop.IOLoop.instance().stop()
     else:

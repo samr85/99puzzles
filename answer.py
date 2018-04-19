@@ -9,4 +9,4 @@ class answer:
             self.correct = False
 
     def __str__(self):
-        "%3d = f(%s)"%(self.result, ", ".join("%3d"%(x) for x in self.inputs))
+        return "%3d = f(%s)"%(self.result, ", ".join("%3d"%(x) for x in self.inputs))

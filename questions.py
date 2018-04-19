@@ -17,7 +17,7 @@ def lastQuestion():
     return question.qNo
 
 def reloadQuestions():
-    questionList = {}
+    questionList.clear()
     question.qNo = -1
     import imp
     import questionList
@@ -61,7 +61,7 @@ class question:
 class retX(question):
     def __init__(self):
         super().__init__()
-        self.introductionHTML="Welcome to the 99 puzzle hunt!  Your aim with all questions here is to work out how to get the mystery function to calculate 99"
+        self.introductionHTML = "Welcome to the 99 puzzle hunt!  Your aim with all questions here is to work out how to get the mystery function to calculate 99"
 
     def calc(self, user, x):
         return x[0]
